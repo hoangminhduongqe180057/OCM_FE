@@ -1,0 +1,9 @@
+npm create vite@latest OCM-FE -- --template react
+cd OCM-FE
+npm install
+npm install 
+@mui/material 
+@emotion/react 
+@emotion/styled 
+@reduxjs/toolkit react-redux axios 
+@microsoft/signalr react-router-dom react-toastify
