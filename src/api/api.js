@@ -29,7 +29,6 @@ api.interceptors.request.use((config) => {
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             return api(originalRequest);
           } catch (refreshError) {
-            // Refresh token không hợp lệ, đăng xuất
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             window.location.href = '/login';

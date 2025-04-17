@@ -32,7 +32,6 @@ const registerSchema = Yup.object().shape({
     .required('Email là bắt buộc'),
   password: Yup.string()
     .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
-    .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
     .matches(/[A-Z]/, 'Mật khẩu phải có ít nhất 1 chữ hoa')
     .matches(/[0-9]/, 'Mật khẩu phải có ít nhất 1 số')
     .required('Mật khẩu là bắt buộc'),
@@ -45,7 +44,7 @@ const AuthPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { status } = useSelector((state) => state.auth);
+  const { status, error, user } = useSelector((state) => state.auth);
 
   // Xác định trạng thái: đăng nhập hay đăng ký dựa trên URL
   const isLogin = location.pathname === '/login';
@@ -97,11 +96,13 @@ const AuthPage = () => {
       if ((isLogin ? login.fulfilled : register.fulfilled).match(result)) {
         setToastMessage(isLogin ? 'Đăng nhập thành công!' : 'Đăng ký thành công!');
         setOpenToast(true);
+
         if (!isLogin) {
           setTimeout(() => {
             navigate('/login');
-          }, 1000); // Chờ 1 giây để người dùng thấy toast trước khi điều hướng
+          }, 1000);
         }
+
       } else if (result.payload) {
         // Chỉ hiển thị lỗi xác thực từ backend
         const errorArray = result.payload;
@@ -124,6 +125,12 @@ const AuthPage = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (isLogin && status === 'succeeded' && user) {
+      navigate('/dashboard');
+    }
+  }, [status, user, isLogin, navigate]);
 
   // Cấu hình các trường nhập liệu
   const fields = isLogin

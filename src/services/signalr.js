@@ -1,22 +1,49 @@
-// src/services/signalr.js
 import * as signalR from '@microsoft/signalr';
 
-const connection = new signalR.HubConnectionBuilder()
-  .withUrl('https://localhost:7075/notificationHub', {
-    accessTokenFactory: () => localStorage.getItem('accessToken'),
-  })
-  .configureLogging(signalR.LogLevel.Information)
-  .build();
+let connection = null;
+let isConnected = false;
+let isStarting = false;
 
-export const startConnection = async () => {
-  try {
-    await connection.start();
-    console.log('SignalR Connected');
-  } catch (err) {
-    console.error('SignalR Connection Error: ', err);
+export const initializeSignalR = async (onMessageReceived) => {
+  if (isConnected || isStarting) {
+    return;
   }
+
+  if (!connection) {
+    connection = new signalR.HubConnectionBuilder()
+      .withUrl('https://localhost:7075/hubs/notification', {
+        accessTokenFactory: () => localStorage.getItem('accessToken'),
+      })
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+  }
+
+  connection.off('ReceiveNotification');
+  connection.on('ReceiveNotification', (message) => {
+    console.log(message)
+    onMessageReceived(message);
+  });
+
+  try {
+    isStarting = true;
+    await connection.start();
+    isConnected = true;
+  } catch (err) {
+    console.error('Failed to start SignalR:', err);
+  } finally {
+    isStarting = false;
+  }
+
+  connection.onclose(() => {
+    isConnected = false;
+  });
 };
 
-export const onNotification = (callback) => {
-  connection.on('ReceiveNotification', callback);
+export const stopSignalR = async () => {
+  if (connection && isConnected) {
+    await connection.stop();
+    connection = null;
+    isConnected = false;
+  }
 };
