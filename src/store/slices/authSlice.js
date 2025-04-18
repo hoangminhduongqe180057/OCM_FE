@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/api';
+import { decodeJwt } from '../../utils/jwt';
 
 export const login = createAsyncThunk('Auth/login', async (credentials, { rejectWithValue }) => {
   try {
@@ -31,7 +32,9 @@ export const logout = createAsyncThunk('Auth/logout', async (_, { rejectWithValu
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: JSON.parse(localStorage.getItem('user')) || null,
+    role: localStorage.getItem('accessToken')
+    ? decodeJwt(localStorage.getItem('accessToken'))?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null
+    : null,
     accessToken: localStorage.getItem('accessToken') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
     status: 'idle', // chưa làm gì
@@ -45,10 +48,9 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        state.role = decodeJwt(action.payload.accessToken)?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
         localStorage.setItem('accessToken', action.payload.accessToken);
         localStorage.setItem('refreshToken', action.payload.refreshToken);
       })
@@ -57,10 +59,9 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(logout.fulfilled, (state) => {
-        state.user = null;
+        state.role = null;
         state.accessToken = null;
         state.refreshToken = null;
-        localStorage.removeItem('user');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
       });

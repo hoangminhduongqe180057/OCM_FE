@@ -44,10 +44,18 @@ const AuthPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { status, error, user } = useSelector((state) => state.auth);
+  const { status, error, role } = useSelector((state) => state.auth);
 
   // Xác định trạng thái: đăng nhập hay đăng ký dựa trên URL
   const isLogin = location.pathname === '/login';
+
+  useEffect(() => {
+    if (isLogin && status === 'succeeded' && role) {
+      if (['Admin', 'Instructor'].includes(role)) {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [status, role, isLogin, navigate]);
 
   // State cho form
   const initialCredentials = isLogin
@@ -125,13 +133,6 @@ const AuthPage = () => {
       }
     }
   };
-
-  useEffect(() => {
-    if (isLogin && status === 'succeeded' && user) {
-      navigate('/dashboard');
-    }
-  }, [status, user, isLogin, navigate]);
-
   // Cấu hình các trường nhập liệu
   const fields = isLogin
     ? [
@@ -139,12 +140,14 @@ const AuthPage = () => {
           name: 'username',
           label: 'Tài khoản',
           icon: <AccountCircleIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'username',
         },
         {
           name: 'password',
           label: 'Mật khẩu',
           type: 'password',
           icon: <LockIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'current-password',
         },
       ]
     : [
@@ -152,29 +155,34 @@ const AuthPage = () => {
           name: 'fullName',
           label: 'Họ và tên',
           icon: <AccountCircleIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'name',
         },
         {
           name: 'username',
           label: 'Tài khoản',
           icon: <AccountCircleIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'username',
         },
         {
           name: 'email',
           label: 'Email',
           type: 'email',
           icon: <EmailIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'email',
         },
         {
           name: 'password',
           label: 'Mật khẩu',
           type: 'password',
           icon: <LockIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'current-password',
         },
         {
           name: 'confirmPassword',
           label: 'Xác nhận mật khẩu',
           type: 'password',
           icon: <LockIcon sx={{ color: '#0277bd' }} />,
+          autoComplete: 'current-password',
         },
       ];
 

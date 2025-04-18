@@ -5,17 +5,7 @@ import {
 } from '@mui/material';
 
 const AuthForm = ({
-  title,
-  fields,
-  handleSubmit,
-  status,
-  generalError,
-  showRememberMe = false,
-  linkText,
-  linkTo,
-  credentials,
-  setCredentials,
-  fieldErrors,
+  title, fields, handleSubmit, status, generalError, showRememberMe = false, linkText, linkTo, credentials, setCredentials, fieldErrors
 }) => {
   return (
     <Paper
@@ -49,7 +39,8 @@ const AuthForm = ({
             type={field.type || 'text'}
             fullWidth
             margin="normal"
-            value={credentials[field.name]}
+            value={credentials[field.name] || ''}
+            autoComplete={field.autoComplete}
             onChange={(e) =>
               setCredentials({ ...credentials, [field.name]: e.target.value })
             }
@@ -74,7 +65,6 @@ const AuthForm = ({
             variant="body2" // Giảm cỡ chữ
             color="error"
             align="left"
-            start
             sx={{ mt: 1 }} // Khoảng cách trên và dưới
           >
             {generalError}

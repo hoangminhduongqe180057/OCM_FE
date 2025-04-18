@@ -80,3 +80,19 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.Toastify__toast {
+  margin-top: 50px;
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.Toastify__toast--info {
+  background: #2196f3;
+  color: white;
+}
+
+.Toastify__progress-bar {
+  background: #90caf9;
+}

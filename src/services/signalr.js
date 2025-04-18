@@ -21,7 +21,6 @@ export const initializeSignalR = async (onMessageReceived) => {
 
   connection.off('ReceiveNotification');
   connection.on('ReceiveNotification', (message) => {
-    console.log(message)
     onMessageReceived(message);
   });
 

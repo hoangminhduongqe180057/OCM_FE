@@ -5,6 +5,8 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
+let refreshPromise = null;
+
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -22,13 +24,32 @@ api.interceptors.request.use((config) => {
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
           try {
-            const response = await axios.post('https://localhost:7075/api/Auth/refresh', { refreshToken });
+            if (refreshPromise) {
+              await refreshPromise;
+              originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+              return api(originalRequest);
+            }
+            console.log(refreshToken, "from try")
+            refreshPromise = axios.post('https://localhost:7075/api/Auth/refresh', 
+              { refreshToken },
+              { headers: { 'Content-Type': 'application/json' } });
+            const response = await refreshPromise
             const { accessToken, refreshToken: newRefreshToken } = response.data;
+
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', newRefreshToken);
+
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+            console.log(accessToken, "from try")
+            console.log(newRefreshToken, "from try")
+
+            refreshPromise = null;
             return api(originalRequest);
           } catch (refreshError) {
+            console.log('Refresh token error:', refreshError?.response?.data);
+            
+            refreshPromise = null;
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             window.location.href = '/login';
