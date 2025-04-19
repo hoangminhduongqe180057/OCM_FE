@@ -32,9 +32,8 @@ export const logout = createAsyncThunk('Auth/logout', async (_, { rejectWithValu
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    role: localStorage.getItem('accessToken')
-    ? decodeJwt(localStorage.getItem('accessToken'))?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null
-    : null,
+    role: localStorage.getItem('accessToken') ? decodeJwt(localStorage.getItem('accessToken'))?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null : null,
+    fullName: localStorage.getItem('accessToken') ? decodeJwt(localStorage.getItem('accessToken'))?.fullName || null : null,
     accessToken: localStorage.getItem('accessToken') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
     status: 'idle', // chưa làm gì
@@ -51,6 +50,7 @@ const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.role = decodeJwt(action.payload.accessToken)?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
+        state.fullName = decodeJwt(action.payload.accessToken)?.fullName || null;
         localStorage.setItem('accessToken', action.payload.accessToken);
         localStorage.setItem('refreshToken', action.payload.refreshToken);
       })
