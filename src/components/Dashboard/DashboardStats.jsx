@@ -32,8 +32,6 @@ function DashboardStats() {
     },
   ];
 
-  cards.map((card) => console.log(card.value))
-
   return (
     <Grid container spacing={3} sx={{ mb: 4 }}>
       {cards.map((card, index) => (

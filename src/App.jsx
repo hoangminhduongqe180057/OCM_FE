@@ -6,6 +6,7 @@ import theme from "./theme";
 import { useTheme } from "@mui/material/styles";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
+import CoursesPage from "./pages/CoursesPage";
 import NavBar from "./components/NavBar/NavBar";
 import Sidebar from "./components/NavBar/Sidebar";
 import Notifications from "./components/Notification/Notifications";
@@ -60,6 +61,24 @@ const AppContent = () => {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                <ProtectedRoute>
+                  <CoursesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses/new"
+              element={
+                <ProtectedRoute>
+                  <Box sx={{ p: 3 }}>
+                    <Typography variant="h4">Thêm khóa học (chưa triển khai)</Typography>
+                  </Box>
                 </ProtectedRoute>
               }
             />
