@@ -32,14 +32,14 @@ export function BarChart({ title, data }) {
       {
         label: title,
         data: data.values,
-        backgroundColor: "#1976d2",
+        backgroundColor: "#14375F", // Xanh đậm
       },
     ],
   };
 
   return (
-    <Paper sx={{ p: 2, mt: 3, borderRadius: 2 }} elevation={1}>
-      <Typography variant="h6">{title}</Typography>
+    <Paper sx={{ p: 2, mt: 3, borderRadius: 2, backgroundColor: "#FFFFFF" }} elevation={1}>
+      <Typography variant="h6" sx={{ color: "#14375F" }}>{title}</Typography>
       <Box sx={{ height: 300 }}>
         <Bar
           data={chartData}
@@ -60,16 +60,16 @@ export function LineChart({ title, data }) {
       {
         label: title,
         data: data.values,
-        borderColor: "#0288d1",
-        backgroundColor: "rgba(2, 136, 209, 0.2)",
+        borderColor: "#6D8199", // Xanh xám nhạt
+        backgroundColor: "rgba(109, 129, 153, 0.2)", // Fill nhẹ
         fill: true,
       },
     ],
   };
 
   return (
-    <Paper sx={{ p: 2, mt: 3, borderRadius: 2 }} elevation={1}>
-      <Typography variant="h6">{title}</Typography>
+    <Paper sx={{ p: 2, mt: 3, borderRadius: 2, backgroundColor: "#FFFFFF" }} elevation={1}>
+      <Typography variant="h6" sx={{ color: "#14375F" }}>{title}</Typography>
       <Box sx={{ height: 300 }}>
         <Line
           data={chartData}
@@ -89,14 +89,14 @@ export function PieChart({ title, data }) {
     datasets: [
       {
         data: data.values,
-        backgroundColor: ["#1976d2", "#0288d1", "#f44336"],
+        backgroundColor: ["#14375F", "#6D8199", "#E24943"], // Xanh đậm, xanh xám nhạt, đỏ cam
       },
     ],
   };
 
   return (
-    <Paper sx={{ p: 2, mt: 3, borderRadius: 2 }} elevation={1}>
-      <Typography variant="h6">{title}</Typography>
+    <Paper sx={{ p: 2, mt: 3, borderRadius: 2, backgroundColor: "#FFFFFF" }} elevation={1}>
+      <Typography variant="h6" sx={{ color: "#14375F" }}>{title}</Typography>
       <Box sx={{ height: 300 }}>
         <Pie
           data={chartData}

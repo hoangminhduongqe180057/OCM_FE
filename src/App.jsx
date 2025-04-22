@@ -7,6 +7,7 @@ import { useTheme } from "@mui/material/styles";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import CoursesPage from "./pages/CoursesPage";
+import CourseDetail from "./pages/CourseDetail";
 import NavBar from "./components/NavBar/NavBar";
 import Sidebar from "./components/NavBar/Sidebar";
 import Notifications from "./components/Notification/Notifications";
@@ -17,6 +18,7 @@ import { useState } from "react";
 
 const ProtectedRoute = ({ children }) => {
   const { role, accessToken, status } = useSelector((state) => state.auth);
+  const openSidebar = useSelector((state) => state.auth.isSidebarOpen);
   const dispatch = useDispatch();
   if (status === "loading") {
     return (
@@ -68,17 +70,23 @@ const AppContent = () => {
               path="/courses"
               element={
                 <ProtectedRoute>
-                  <CoursesPage />
+                  <CoursesPage openSidebar={openSidebar} />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/courses/new"
+              path="/courses/:id"
               element={
                 <ProtectedRoute>
-                  <Box sx={{ p: 3 }}>
-                    <Typography variant="h4">Thêm khóa học (chưa triển khai)</Typography>
-                  </Box>
+                  <CourseDetail openSidebar={openSidebar} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <CourseDetail openSidebar={openSidebar} />
                 </ProtectedRoute>
               }
             />

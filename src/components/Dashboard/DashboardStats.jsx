@@ -11,24 +11,24 @@ function DashboardStats() {
   const cards = [
     {
       title: "Khóa học",
-      value: stats?.courses|| 0,
-      icon: <SchoolIcon sx={{ fontSize: 40, color: "#ffffff" }} />,
+      value: stats?.courses || 0,
+      icon: <SchoolIcon sx={{ fontSize: 40, color: "#FFFFFF" }} />,
       link: "/courses",
-      gradient: "linear-gradient(135deg, #1976d2, #0288d1)",
+      gradient: "linear-gradient(135deg, #14375F, #6D8199)",
     },
     {
       title: "Học viên",
       value: stats?.students || 0,
-      icon: <PeopleIcon sx={{ fontSize: 40, color: "#ffffff" }} />,
+      icon: <PeopleIcon sx={{ fontSize: 40, color: "#FFFFFF" }} />,
       link: "/users",
-      gradient: "linear-gradient(135deg, #0288d1, #4fc3f7)",
+      gradient: "linear-gradient(135deg, #6D8199,rgb(135, 173, 199))",
     },
     {
       title: "Giảng viên",
       value: stats?.instructors || 0,
-      icon: <BookIcon sx={{ fontSize: 40, color: "#ffffff" }} />,
+      icon: <BookIcon sx={{ fontSize: 40, color: "#FFFFFF" }} />,
       link: "/users",
-      gradient: "linear-gradient(135deg, #4fc3f7, #81d4fa)",
+      gradient: "linear-gradient(135deg, rgb(135, 173, 199), #6D8199)",
     },
   ];
 
@@ -48,7 +48,7 @@ function DashboardStats() {
                 flexDirection: "column",
                 alignItems: "flex-start",
                 background: card.gradient,
-                color: "#ffffff",
+                color: "#FFFFFF",
                 borderRadius: 2,
               }}
             >
@@ -63,7 +63,11 @@ function DashboardStats() {
               </Typography>
               <Button
                 variant="text"
-                sx={{ mt: 1, color: "#ffffff", "&:hover": { bgcolor: "rgba(255,255,255,0.2)" } }}
+                sx={{
+                  mt: 1,
+                  color: "#FFFFFF",
+                  "&:hover": { bgcolor: "#E24943" },
+                }}
                 href={card.link}
               >
                 Xem chi tiết

@@ -25,14 +25,15 @@ function Sidebar({ open, toggleSidebar }) {
       open={open}
       onClose={toggleSidebar}
       sx={{
+        //position: "fixed",
         width: 240,
         "& .MuiDrawer-paper": {
           width: 240,
-          background: "linear-gradient(180deg, #e3f2fd, #bbdefb)",
+          background: "linear-gradient(180deg, #14375F, #6D8199)", // Gradient xanh đậm đến xanh xám nhạt
           border: "none",
           boxShadow: "3px 0 12px rgba(0,0,0,0.15)",
-          top: 64, // Match AppBar height
-          height: "calc(100% - 64px)", // Adjust for AppBar
+          top: 64,
+          height: "calc(100% - 64px)",
           transition: theme.transitions.create(["width", "margin"], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -53,18 +54,18 @@ function Sidebar({ open, toggleSidebar }) {
               py: 1.5,
               "&:hover": {
                 cursor: "pointer",
-                bgcolor: "#0288d1",
-                "& .MuiListItemText-primary": { color: "#ffffff", fontWeight: 600 },
-                "& .MuiListItemIcon-root": { color: "#ffffff" },
+                bgcolor: "#6D8199", // Xanh xám nhạt khi hover
+                "& .MuiListItemText-primary": { color: "#FFFFFF", fontWeight: 600 },
+                "& .MuiListItemIcon-root": { color: "#FFFFFF" },
               },
             }}
           >
-            <ListItemIcon sx={{ color: "#1976d2", minWidth: 40 }}>
+            <ListItemIcon sx={{ color: "#FFFFFF", minWidth: 40 }}>
               {item.icon}
             </ListItemIcon>
             <ListItemText
               primary={item.text}
-              primaryTypographyProps={{ color: "#424242", fontSize: 16 }}
+              primaryTypographyProps={{ color: "#FFFFFF", fontSize: 16 }}
             />
           </ListItem>
         ))}

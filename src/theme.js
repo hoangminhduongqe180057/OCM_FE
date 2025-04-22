@@ -33,6 +33,14 @@ const theme = createTheme({
         },
       },
     },
+    MuiDataGrid: {
+      styleOverrides: {
+        columnHeaders: {
+          backgroundColor: "#1976D2",
+          color: "#FFFFFF",
+        },
+      },
+    },
   },
 });
 

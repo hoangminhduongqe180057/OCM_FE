@@ -29,20 +29,16 @@ api.interceptors.request.use((config) => {
               originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
               return api(originalRequest);
             }
-            console.log(refreshToken, "from try")
             refreshPromise = axios.post('https://localhost:7075/api/Auth/refresh', 
               { refreshToken },
               { headers: { 'Content-Type': 'application/json' } });
             const response = await refreshPromise
-            const { accessToken, refreshToken: newRefreshToken } = response.data;
+            const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', newRefreshToken);
 
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
-            console.log(accessToken, "from try")
-            console.log(newRefreshToken, "from try")
 
             refreshPromise = null;
             return api(originalRequest);

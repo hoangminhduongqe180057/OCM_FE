@@ -38,6 +38,7 @@ const authSlice = createSlice({
     refreshToken: localStorage.getItem('refreshToken') || null,
     status: 'idle', // chưa làm gì
     error: null,
+    isSidebarOpen: true,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -66,6 +67,9 @@ const authSlice = createSlice({
         localStorage.removeItem('refreshToken');
       });
   },
+  toggleSidebar: (state) => {
+    state.isSidebarOpen = !state.isSidebarOpen;
+  },
 });
-
+export const { toggleSidebar } = authSlice.actions;
 export default authSlice.reducer;
