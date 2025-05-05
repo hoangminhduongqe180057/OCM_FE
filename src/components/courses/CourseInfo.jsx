@@ -2,7 +2,7 @@ import { Box, Typography, Paper, Grid } from "@mui/material";
 
 function CourseInfo({ course }) {
   return (
-    <Paper sx={{ p: 3, borderRadius: 2, backgroundColor: "#FFFFFF", border: "1px solid #6D8199" }}>
+    <Paper sx={{ p: 3, borderRadius: 2, backgroundColor: "#FFFFFF", border: "1px solid #6D8199", maxWidth: 1200, width: "100%" }}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <img

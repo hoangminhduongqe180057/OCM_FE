@@ -1,5 +1,8 @@
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useState, useEffect } from "react";
+import { createLesson, updateLesson } from "../store/slices/courseSlice";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import {
   Drawer,
@@ -13,9 +16,8 @@ import {
 
 const schema = yup.object({
   title: yup.string().required("Tiêu đề là bắt buộc"),
-  description: yup.string().required("Mô tả là bắt buộc"),
-  duration: yup.number().required("Thời lượng là bắt buộc").positive("Thời lượng phải lớn hơn 0"),
   videoUrl: yup.string().url("Video URL không hợp lệ").required("Video URL là bắt buộc"),
+  documentUrl: yup.string().url("Document URL không hợp lệ").nullable(),
   order: yup.number().required("Thứ tự là bắt buộc").positive("Thứ tự phải lớn hơn 0"),
 }).required();
 
@@ -24,22 +26,44 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
     resolver: yupResolver(schema),
     defaultValues: lesson || {
       title: "",
-      description: "",
-      duration: 0,
       videoUrl: "",
+      documentUrl: "",
       order: 1,
     },
   });
+
+  useEffect(() => {
+    if (lesson) {
+      reset({
+        title: lesson.title || "",
+        videoUrl: lesson.videoUrl || "",
+        documentUrl: lesson.documentUrl || "",
+        order: lesson.order || 1,
+      });
+    }
+  }, [lesson, reset]);
+
+  const dispatch = useDispatch();
 
   const handleFormSubmit = (data) => {
     if (lesson) {
       console.log(`Update lesson ${lesson.id} for course ${courseId}`, data);
       // Dispatch action to update lesson here
+        dispatch(updateLesson(data)).then((result) => {
+          if (result.meta.requestStatus === "fulfilled") {
+            setOpenDrawer(false);
+          }
+        });
     } else {
       console.log(`Add new lesson to course ${courseId}`, data);
       // Dispatch action to add lesson here
+      dispatch(createLesson(data)).then((result) => {
+        if (result.meta.requestStatus === "fulfilled") {
+          setOpenDrawer(false);
+          reset();
+        }
+      });
     }
-    reset();
     onClose();
   };
 
@@ -72,7 +96,7 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
               />
             )}
           />
-          <Controller
+          {/* <Controller
             name="description"
             control={control}
             render={({ field }) => (
@@ -118,7 +142,7 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
                 }}
               />
             )}
-          />
+          /> */}
           <Controller
             name="videoUrl"
             control={control}
@@ -130,6 +154,28 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
                 margin="normal"
                 error={!!errors.videoUrl}
                 helperText={errors.videoUrl?.message}
+                sx={{
+                  "& .MuiInputBase-input": { color: "#14375F" },
+                  "& .MuiInputLabel-root": { color: "#14375F" },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "#6D8199" },
+                    "&:hover fieldset": { borderColor: "#14375F" },
+                  },
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="documentUrl"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Document URL"
+                fullWidth
+                margin="normal"
+                error={!!errors.documentUrl}
+                helperText={errors.documentUrl?.message}
                 sx={{
                   "& .MuiInputBase-input": { color: "#14375F" },
                   "& .MuiInputLabel-root": { color: "#14375F" },

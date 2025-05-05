@@ -26,14 +26,14 @@ function LessonTable({ courseId, lessons, isEditing }) {
   };
 
   const columns = [
-    { field: "title", headerName: "Tiêu đề", width: 300 },
-    { field: "description", headerName: "Mô tả", width: 400 },
-    { field: "duration", headerName: "Thời lượng (phút)", width: 150 },
-    { field: "order", headerName: "Thứ tự", width: 100 },
+    { field: "title", headerName: "Tiêu đề",  flex: 2 },
+    { field: "videoUrl", headerName: "Video URL",  flex: 3 },
+    { field: "documentUrl", headerName: "Document URL", flex: 2 },
+    { field: "createdAt", headerName: "Ngày tạo", flex: 2 },
     {
       field: "actions",
       headerName: "Hành động",
-      width: 150,
+      flex: 1,
       renderCell: (params) => isEditing && (
         <>
           <IconButton
@@ -71,13 +71,14 @@ function LessonTable({ courseId, lessons, isEditing }) {
           </Button>
         </Box>
       )}
-      <Box sx={{ height: 400, width: "100%" }}>
+      <Box sx={{ height: 400, width: "100%", maxWidth: 1200, overflowX: "hidden", transition: "max-width 0.3s ease" }}>
         <DataGrid
           rows={lessons}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5, 10, 20]}
           getRowId={(row) => row.id}
+          autoHeight
           sx={{
             backgroundColor: "#FFFFFF",
             borderRadius: 2,

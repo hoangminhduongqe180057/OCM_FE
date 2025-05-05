@@ -2,26 +2,30 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Typography, Button, CircularProgress, Alert } from "@mui/material";
-import { fetchCourseById, updateCourse } from "../store/slices/courseSlice";
+import { fetchCourseById, fetchLessons, updateCourse } from "../store/slices/courseSlice";
 import { motion } from "framer-motion";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CourseInfo from "../components/courses/CourseInfo";
 import LessonTable from "../components/courses/LessonTable";
 import CourseFormDrawer from "../components/courses/CourseFormDrawer";
+import LessonFormDrawer from "../components/courses/LessonFormDrawer";
 
 function CourseDetail({ openSidebar }) {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { course, status, error, updateStatus, updateError } = useSelector((state) => state.courses);
+  const { course, lessons, status, error, updateStatus, updateError } = useSelector((state) => state.courses);
   const { role } = useSelector((state) => state.auth);
 
   const [isEditing, setIsEditing] = useState(false);
   const [openCourseDrawer, setOpenCourseDrawer] = useState(false);
+  const [openLessonDrawer, setOpenLessonDrawer] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState(null); // null = thêm mới
 
   useEffect(() => {
     dispatch(fetchCourseById(id));
+    dispatch(fetchLessons(id));
   }, [dispatch, id]);
 
   const handleEditCourse = (data) => {
@@ -31,6 +35,21 @@ function CourseDetail({ openSidebar }) {
         setIsEditing(false);
       }
     });
+  };
+
+  const handleAddLesson = (data) => {
+    setSelectedLesson(null); // Tạo mới
+    setOpenLessonDrawer(true);
+  };
+  
+  const handleEditLesson = (lesson) => {
+    setSelectedLesson(lesson); // Sửa bài học
+    setOpenLessonDrawer(true);
+  };
+  
+  const handleCloseLessonDrawer = () => {
+    setOpenLessonDrawer(false);
+    setSelectedLesson(null);
   };
 
   const handleToggleEdit = () => {
@@ -65,7 +84,7 @@ function CourseDetail({ openSidebar }) {
       }}
     >
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, width: "100%", }}>
           <Typography variant="h4" sx={{ color: "#14375F" }}>
             {isEditing ? "Chỉnh sửa khóa học" : "Chi tiết khóa học"}
           </Typography>
@@ -91,7 +110,7 @@ function CourseDetail({ openSidebar }) {
         <Typography variant="h5" sx={{ color: "#14375F", mt: 4, mb: 2 }}>
           Danh sách bài học
         </Typography>
-        <LessonTable courseId={id} lessons={course?.lessons || []} isEditing={isEditing} />
+        <LessonTable courseId={id} lessons={lessons || []} isEditing={isEditing} onAddLesson={handleAddLesson} onEditLesson={handleEditLesson}/>
       </motion.div>
 
       <CourseFormDrawer
@@ -101,6 +120,13 @@ function CourseDetail({ openSidebar }) {
         createStatus={updateStatus}
         createError={updateError}
         defaultValues={course}
+      />
+
+      <LessonFormDrawer
+        open={openLessonDrawer}
+        onClose={handleCloseLessonDrawer}
+        lesson={selectedLesson}
+        courseId={id}
       />
     </Box>
   );
