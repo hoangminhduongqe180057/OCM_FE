@@ -77,7 +77,9 @@ export const updateLesson = createAsyncThunk(
   'lesson/update',
   async ({ id, data }, { rejectWithValue }) => {
     try {
+      console.log(`id là ${id}, data là ${data}`)
       const response = await api.put(`/lesson/${id}`, data);
+      
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.errors || "Failed to update lesson");

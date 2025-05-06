@@ -1,7 +1,7 @@
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState, useEffect } from "react";
-import { createLesson, updateLesson } from "../store/slices/courseSlice";
+import { createLesson, updateLesson } from "/src/store/slices/courseSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import {
@@ -32,39 +32,35 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
     },
   });
 
+  const dispatch = useDispatch();
+  const { createStatus, createError, updateStatus, updateError } = useSelector((state) => state.courses);
+
   useEffect(() => {
-    if (lesson) {
-      reset({
-        title: lesson.title || "",
-        videoUrl: lesson.videoUrl || "",
-        documentUrl: lesson.documentUrl || "",
-        order: lesson.order || 1,
-      });
-    }
+    reset({
+      title: lesson?.title || "",
+      videoUrl: lesson?.videoUrl || "",
+      documentUrl: lesson?.documentUrl || "",
+      order: lesson?.order || 1,
+    });
   }, [lesson, reset]);
 
-  const dispatch = useDispatch();
-
   const handleFormSubmit = (data) => {
+    const payload = { ...data, courseId };
+
     if (lesson) {
-      console.log(`Update lesson ${lesson.id} for course ${courseId}`, data);
-      // Dispatch action to update lesson here
-        dispatch(updateLesson(data)).then((result) => {
-          if (result.meta.requestStatus === "fulfilled") {
-            setOpenDrawer(false);
-          }
-        });
+      dispatch(updateLesson({ id: lesson.id, data: payload })).then((result) => {
+      if (result.meta.requestStatus === "fulfilled") {
+        onClose();
+      }
+    });
     } else {
-      console.log(`Add new lesson to course ${courseId}`, data);
-      // Dispatch action to add lesson here
-      dispatch(createLesson(data)).then((result) => {
+      dispatch(createLesson(payload)).then((result) => {
         if (result.meta.requestStatus === "fulfilled") {
-          setOpenDrawer(false);
+          onClose();
           reset();
         }
       });
     }
-    onClose();
   };
 
   return (
@@ -73,6 +69,21 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
         <Typography variant="h6" sx={{ color: "#14375F", mb: 2 }}>
           {lesson ? "Chỉnh sửa bài học" : "Thêm bài học mới"}
         </Typography>
+
+        {/* Hiển thị lỗi nếu có */}
+        {(createError || updateError) && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {createError || updateError || "Đã có lỗi xảy ra"}
+          </Alert>
+        )}
+
+        {/* Hiển thị loading nếu đang xử lý */}
+        {(createStatus === "loading" || updateStatus === "loading") && (
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+            <CircularProgress sx={{ color: "#14375F" }} />
+          </Box>
+        )}
+
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Controller
             name="title"
@@ -96,53 +107,6 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
               />
             )}
           />
-          {/* <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Mô tả"
-                fullWidth
-                margin="normal"
-                multiline
-                rows={4}
-                error={!!errors.description}
-                helperText={errors.description?.message}
-                sx={{
-                  "& .MuiInputBase-input": { color: "#14375F" },
-                  "& .MuiInputLabel-root": { color: "#14375F" },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "#6D8199" },
-                    "&:hover fieldset": { borderColor: "#14375F" },
-                  },
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="duration"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Thời lượng (phút)"
-                type="number"
-                fullWidth
-                margin="normal"
-                error={!!errors.duration}
-                helperText={errors.duration?.message}
-                sx={{
-                  "& .MuiInputBase-input": { color: "#14375F" },
-                  "& .MuiInputLabel-root": { color: "#14375F" },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "#6D8199" },
-                    "&:hover fieldset": { borderColor: "#14375F" },
-                  },
-                }}
-              />
-            )}
-          /> */}
           <Controller
             name="videoUrl"
             control={control}
