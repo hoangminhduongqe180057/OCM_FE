@@ -33,6 +33,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     role: localStorage.getItem('accessToken') ? decodeJwt(localStorage.getItem('accessToken'))?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null : null,
+    id: localStorage.getItem('accessToken') ? decodeJwt(localStorage.getItem('accessToken'))?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || null : null,
     fullName: localStorage.getItem('accessToken') ? decodeJwt(localStorage.getItem('accessToken'))?.fullName || null : null,
     accessToken: localStorage.getItem('accessToken') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,

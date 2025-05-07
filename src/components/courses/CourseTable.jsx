@@ -15,9 +15,13 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteCourse } from "/src/store/slices/courseSlice.js";
 
 function CourseTable({ courses, status, error, selectedRows, setSelectedRows, maxWidth }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { deleteStatus, deleteError } = useSelector((state) => state.courses);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
 
@@ -34,6 +38,33 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
   const handleMenuClose = () => {
     setAnchorEl(null);
     setSelectedCourseId(null);
+  };
+
+  // Xử lý xóa một khóa học
+  const handleDeleteCourse = (courseId) => {
+    dispatch(deleteCourse(courseId)).then((result) => {
+      if (result.meta.requestStatus === "fulfilled") {
+        handleMenuClose();
+      }
+    });
+  };
+
+  // Xử lý xóa nhiều khóa học
+  const handleDeleteSelected = () => {
+    selectedRows.forEach((courseId) => {
+      dispatch(deleteCourse(courseId));
+    });
+    setSelectedRows([]); // Xóa các hàng đã chọn sau khi xóa
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date)) return "N/A";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   const columns = [
@@ -72,7 +103,18 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
       ),
     },
     { field: "status", headerName: "Trạng thái", flex: 1, valueGetter: () => "Draft" },
-    { field: "createdAt", headerName: "Cập nhật", flex: 1, type: "dateTime", valueGetter: (params) => new Date(params.value) },
+    { field: "createdAt",
+    headerName: "Cập nhật",
+    flex: 1,
+    renderCell: (params) => {
+      const date = params.value ? new Date(params.value) : null;
+      return (
+        <Typography sx={{ color: "#14375F" }}>
+          {formatDate(params.value)}
+        </Typography>
+      );
+    },
+    },
     {
       field: "actions",
       headerName: "Hành động",
@@ -115,7 +157,7 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
             </MenuItem>
             <MenuItem
               onClick={() => {
-                console.log(`Delete course ${params.row.id}`);
+                handleDeleteCourse(params.row.id);
                 handleMenuClose();
               }}
             >
@@ -135,13 +177,14 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
           <Button
             variant="contained"
             color="error"
-            onClick={() => console.log("Delete selected:", selectedRows)}
+            onClick={handleDeleteSelected} // Gọi xóa nhiều khóa học
             sx={{
               mr: 1,
               bgcolor: "#E0312E",
               "&:hover": { bgcolor: "#E24943" },
               color: "#FFFFFF",
             }}
+            disabled={deleteStatus === "loading"} // Vô hiệu hóa khi đang xóa
           >
             Xóa {selectedRows.length} khóa học
           </Button>
@@ -157,6 +200,12 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
             Publish {selectedRows.length} khóa học
           </Button>
         </Box>
+      )}
+
+      {deleteStatus === "failed" && (
+        <Alert severity="error" sx={{ mb: 2, color: "#E0312E" }}>
+          {deleteError || "Không thể xóa khóa học"}
+        </Alert>
       )}
 
       {status === "loading" && (

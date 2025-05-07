@@ -38,12 +38,12 @@ function CourseDetail({ openSidebar }) {
   };
 
   const handleAddLesson = (data) => {
-    setSelectedLesson(null); // Tạo mới
+    setSelectedLesson(null);
     setOpenLessonDrawer(true);
   };
   
   const handleEditLesson = (lesson) => {
-    setSelectedLesson(lesson); // Sửa bài học
+    setSelectedLesson(lesson);
     setOpenLessonDrawer(true);
   };
   
