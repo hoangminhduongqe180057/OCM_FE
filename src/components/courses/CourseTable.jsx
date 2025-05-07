@@ -85,7 +85,19 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
       headerName: "Tiêu đề",
       flex: 2,
       renderCell: (params) => (
-        <Typography sx={{ fontSize: 16, fontWeight: 600, color: "#14375F" }}>
+        <Typography 
+        sx={{ fontSize: 16, fontWeight: 600, color: "#14375F", 
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          display: "-webkit-box",
+          WebkitLineClamp: 2, // Hiển thị tối đa 2 dòng
+          WebkitBoxOrient: "vertical",
+          lineHeight: "1.4em", // chiều cao 1 dòng
+          maxHeight: "2.8em", // giới hạn chiều cao 2 dòng
+          whiteSpace: "normal", // Cho phép xuống dòng
+        }} 
+        title={params.value} // Tooltip khi hover
+        >
             {params.value}
         </Typography>
       ),
@@ -99,6 +111,16 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
       renderCell: (params) => (
         <Typography sx={{ color: "#14375F" }}>
             {params.value ? `${params.value.toLocaleString()}đ` : "Miễn phí"}
+        </Typography>
+      ),
+    },
+    {
+      field: "maxStudents",
+      headerName: "Số lượng",
+      flex: 1,
+      renderCell: (params) => (
+        <Typography sx={{ color: "#14375F" }}>
+            {params.value ? params.value : "0"}
         </Typography>
       ),
     },
@@ -146,7 +168,7 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
               <VisibilityIcon sx={{ mr: 1, color: "#14375F", "&:focus": { outline: "none" } }} />
               Xem chi tiết
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 navigate(`/courses/${params.row.id}/edit`);
                 handleMenuClose();
@@ -154,7 +176,7 @@ function CourseTable({ courses, status, error, selectedRows, setSelectedRows, ma
             >
               <EditIcon sx={{ mr: 1, color: "#14375F", "&:focus": { outline: "none" } }} />
               Chỉnh sửa
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem
               onClick={() => {
                 handleDeleteCourse(params.row.id);

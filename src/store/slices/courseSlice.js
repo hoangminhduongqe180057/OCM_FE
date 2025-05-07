@@ -112,9 +112,22 @@ export const deleteLesson = createAsyncThunk(
   }
 );
 
+export const fetchCategories = createAsyncThunk(
+  'categories',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/category');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to fetch categories");
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
+    categories: [],
     courses: [],
     course: null,
     lessons: [],
@@ -166,7 +179,11 @@ const courseSlice = createSlice({
       })
       .addCase(createCourse.fulfilled, (state, action) => {
         state.createStatus = "succeeded";
-        state.courses.push(action.payload);
+        const newCourse = {
+          ...action.payload,
+          categoryName: state.categories.find((cat) => cat.id === action.payload.categoryId)?.name || "N/A",
+        };
+        state.courses.push(newCourse);
       })
       .addCase(createCourse.rejected, (state, action) => {
         state.createStatus = "failed";
@@ -253,6 +270,18 @@ const courseSlice = createSlice({
       .addCase(deleteLesson.rejected, (state, action) => {
         state.deleteStatus = "failed";
         state.deleteError = action.payload;
+      })
+      // fetch all categories
+      .addCase(fetchCategories.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.categories = action.payload;
+      })
+      .addCase(fetchCategories.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
   },
 });

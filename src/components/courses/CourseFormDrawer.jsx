@@ -14,13 +14,22 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
+import { fetchCategories } from "/src/store/slices/courseSlice.js";
 
-const categories = [
-  { id: "CAT_00000001", name: "Programming" },
-  { id: "CAT_00000002", name: "Design" },
-];
+// Hàm định dạng số với dấu phẩy
+const formatNumber = (value) => {
+  if (!value) return "";
+  const number = String(value).replace(/[^0-9]/g, ""); // Chỉ giữ số
+  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Thêm dấu phẩy
+};
+
+// Hàm bỏ định dạng để lấy số nguyên
+const unformatNumber = (value) => {
+  if (!value) return null;
+  return Number(value.replace(/,/g, ""));
+};
 
 const schema = yup.object({
   title: yup.string().required("Tiêu đề là bắt buộc"),
@@ -31,10 +40,17 @@ const schema = yup.object({
     .typeError("Giá phải là một số")
     .positive("Giá phải lớn hơn 0")
     .required("Giá là bắt buộc"),
+    maxStudents: yup
+    .number()
+    .typeError("Giá phải là một số")
+    .positive("Giá phải lớn hơn 0")
+    .required("Giá là bắt buộc"),
 }).required();
 
 function CourseFormDrawer({ open, onClose, onSubmit, createStatus, createError, defaultValues }) {
+  const dispatch = useDispatch();
   const { id } = useSelector((state) => state.auth);
+  const categories = useSelector((state) => state.courses.categories);
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: defaultValues || {
@@ -42,18 +58,30 @@ function CourseFormDrawer({ open, onClose, onSubmit, createStatus, createError, 
       description: "",
       categoryId: "",
       price: null,
-      maxStudent: null,
+      maxStudents: null,
     },
   });
 
+    // State để lưu giá trị hiển thị của price (chuỗi có dấu phẩy)
+    const [displayPrice, setDisplayPrice] = useState("");
+
   useEffect(() => {
+    if (open) {
+      dispatch(fetchCategories()); // Tải danh mục khi drawer mở
+    }
+
+    // Khôi phục giá trị hiển thị khi reset form
+    const initialPrice = defaultValues?.price ?? null;
+    setDisplayPrice(initialPrice ? formatNumber(initialPrice) : "");
+
     reset(defaultValues || {
       title: "",
       description: "",
       categoryId: "",
       price: null,
+      maxStudents: null,
     });
-  }, [defaultValues, reset]);
+  }, [defaultValues, reset, dispatch, open]);
 
   const handleFormSubmit = (data) => {
     const submitData = {
@@ -123,15 +151,44 @@ function CourseFormDrawer({ open, onClose, onSubmit, createStatus, createError, 
             )}
           />
           <Controller
-            name="price"
+            name="maxStudents"
             control={control}
             render={({ field: { onChange, value, ...field } }) => (
               <TextField
                 {...field}
                 value={value ?? ""} // Hiển thị chuỗi rỗng nếu value là null
                 onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)} // Chuyển thành number hoặc null
-                label="Giá (VND)"
+                label="Số lượng"
                 type="number"
+                fullWidth
+                margin="normal"
+                error={!!errors.price}
+                helperText={errors.price?.message}
+                sx={{
+                  "& .MuiInputBase-input": { color: "#14375F" },
+                  "& .MuiInputLabel-root": { color: "#14375F" },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "#6D8199" },
+                    "&:hover fieldset": { borderColor: "#14375F" },
+                  },
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="price"
+            control={control}
+            render={({ field: { onChange, value, ...field } }) => (
+              <TextField
+                {...field}
+                value={displayPrice} // Hiển thị chuỗi rỗng nếu value là null
+                onChange={(e) => {
+                  const formatted = formatNumber(e.target.value);
+                  setDisplayPrice(formatted);
+                  onChange(unformatNumber(formatted));
+                }}
+                label="Giá (VND)"
+                type="text"
                 fullWidth
                 margin="normal"
                 error={!!errors.price}
