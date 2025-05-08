@@ -15,6 +15,16 @@ function LessonTable({ courseId, lessons, isEditing }) {
   const { deleteStatus, deleteError } = useSelector((state) => state.courses); 
   const dispatch = useDispatch();
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date)) return "N/A";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 5,
     page: 0,
@@ -46,10 +56,89 @@ function LessonTable({ courseId, lessons, isEditing }) {
   };
 
   const columns = [
-    { field: "title", headerName: "Tiêu đề",  flex: 2 },
-    { field: "videoUrl", headerName: "Video URL",  flex: 3 },
-    { field: "documentUrl", headerName: "Document URL", flex: 2 },
-    { field: "createdAt", headerName: "Ngày tạo", flex: 2 },
+    {
+      field: "title",
+      headerName: "Tiêu đề",
+      flex: 2,
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            fontSize: 16,
+            color: "#14375F",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            width: "100%",
+            paddingRight: 1
+          }}
+          title={params.value}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: "videoUrl",
+      headerName: "Video URL",
+      flex: 3,
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            fontSize: 16,
+            color: "#14375F",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            width: "100%",
+            paddingRight: 1
+          }}
+          title={params.value}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: "documentUrl",
+      headerName: "Document URL",
+      flex: 2,
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            fontSize: 16,
+            color: "#14375F",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            width: "100%",
+            paddingRight: 1
+          }}
+          title={params.value}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: "createdAt",
+      headerName: "Ngày tạo",
+      flex: 2,
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            color: "#14375F",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            width: "100%",
+            paddingRight: 1
+          }}
+          title={formatDate(params.value)}
+        >
+          {formatDate(params.value)}
+        </Typography>
+      ),
+    },
     {
       field: "actions",
       headerName: "Hành động",
@@ -65,14 +154,14 @@ function LessonTable({ courseId, lessons, isEditing }) {
           <IconButton
             onClick={() => handleDeleteLesson(params.row.id)}
             sx={{ color: "#E0312E", "&:hover": { color: "#E24943" } }}
-            disabled={deleteStatus === "loading"} // Vô hiệu hóa khi đang xóa
+            disabled={deleteStatus === "loading"}
           >
             <DeleteIcon />
           </IconButton>
         </>
       ),
     },
-  ];
+  ];  
 
   return (
     <>
@@ -121,6 +210,11 @@ function LessonTable({ courseId, lessons, isEditing }) {
               backgroundColor: "#FFFFFF",
               borderRadius: 2,
               border: "1px solid #6D8199",
+              "& .MuiDataGrid-cell": {
+                padding: "8px",
+                display: "flex",
+                alignItems: "center",
+              },
               "& .MuiDataGrid-columnHeader": {
                 backgroundColor: "#14375F",
                 color: "#FFFFFF",

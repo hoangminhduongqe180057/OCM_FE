@@ -44,7 +44,7 @@ function CoursesPage({ openSidebar }) {
       if (result.meta.requestStatus === "fulfilled") {
         setOpenDrawer(false);
         reset();
-        // navigate(`/courses/${result.payload.id}/edit`);
+        dispatch(fetchCourses()); 
       }
     });
   };

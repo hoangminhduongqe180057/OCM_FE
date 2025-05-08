@@ -28,9 +28,12 @@ function CourseDetail({ openSidebar }) {
     dispatch(fetchLessons(id));
   }, [dispatch, id]);
 
+  console.log(status)
+
   const handleEditCourse = (data) => {
     dispatch(updateCourse({ id, data })).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {
+        dispatch(fetchCourseById(id));
         setOpenCourseDrawer(false);
         setIsEditing(false);
       }
@@ -53,10 +56,14 @@ function CourseDetail({ openSidebar }) {
   };
 
   const handleToggleEdit = () => {
-    setIsEditing(!isEditing);
+    if (isEditing) {
+      setOpenCourseDrawer(true); // Open drawer to save changes
+    } else {
+      setIsEditing(true);
+    }
   };
 
-  if (status === "loading") {
+  if (status === "loading" && !course) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
         <CircularProgress sx={{ color: "#14375F" }} />
