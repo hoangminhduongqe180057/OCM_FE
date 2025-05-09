@@ -1,10 +1,13 @@
-import { useState } from "react";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { useState, useMemo } from "react";
+import { Box, Button, IconButton, Typography, Snackbar, Alert } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import LinkIcon from "@mui/icons-material/Link";
 import LessonFormDrawer from "./LessonFormDrawer";
+import LessonDetailModal from "./LessonDetailModal";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteLesson } from "/src/store/slices/courseSlice.js";
 
@@ -12,6 +15,9 @@ function LessonTable({ courseId, lessons, isEditing }) {
   const [openLessonDrawer, setOpenLessonDrawer] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [openDetailModal, setOpenDetailModal] = useState(false);
+  const [detailLesson, setDetailLesson] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { deleteStatus, deleteError } = useSelector((state) => state.courses); 
   const dispatch = useDispatch();
 
@@ -40,10 +46,16 @@ function LessonTable({ courseId, lessons, isEditing }) {
     setOpenLessonDrawer(true);
   };
 
+  const handleViewDetail = (lesson) => {
+    setDetailLesson(lesson);
+    setOpenDetailModal(true);
+  };
+
   const handleDeleteLesson = (id) => {
     dispatch(deleteLesson(id)).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {
         setSelectedRows(selectedRows.filter((rowId) => rowId !== id)); // Xóa khỏi selectedRows
+        setSnackbarOpen(true);
       }
     });
   };
@@ -53,9 +65,33 @@ function LessonTable({ courseId, lessons, isEditing }) {
       dispatch(deleteLesson(lessonId));
     });
     setSelectedRows([]); // Xóa các hàng đã chọn
+    setSnackbarOpen(true);
   };
 
+  const sortedLessons = useMemo(() => {
+    return [...lessons].sort((a, b) => a.order - b.order);
+  }, [lessons]);
+
   const columns = [
+    {
+      field: "order",
+      headerName: "Thứ tự",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            fontSize: 16,
+            color: "#14375F",
+            width: "100%",
+            textAlign: "center"
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
     {
       field: "title",
       headerName: "Tiêu đề",
@@ -80,7 +116,7 @@ function LessonTable({ courseId, lessons, isEditing }) {
     {
       field: "videoUrl",
       headerName: "Video URL",
-      flex: 3,
+      flex: 2.5,
       renderCell: (params) => (
         <Typography
           sx={{
@@ -101,7 +137,7 @@ function LessonTable({ courseId, lessons, isEditing }) {
     {
       field: "documentUrl",
       headerName: "Document URL",
-      flex: 2,
+      flex: 2.5,
       renderCell: (params) => (
         <Typography
           sx={{
@@ -122,7 +158,7 @@ function LessonTable({ courseId, lessons, isEditing }) {
     {
       field: "createdAt",
       headerName: "Ngày tạo",
-      flex: 2,
+      flex: 1,
       renderCell: (params) => (
         <Typography
           sx={{
@@ -143,21 +179,37 @@ function LessonTable({ courseId, lessons, isEditing }) {
       field: "actions",
       headerName: "Hành động",
       flex: 1,
-      renderCell: (params) => isEditing && (
+      renderCell: (params) => (
         <>
-          <IconButton
-            onClick={() => handleEditLesson(params.row)}
+        {!isEditing && (
+          <>
+            <IconButton
+            onClick={() => handleViewDetail(params.row)}
             sx={{ color: "#14375F", "&:hover": { color: "#6D8199" } }}
-          >
-            <EditIcon />
+            title="Xem chi tiết"
+            >
+            <VisibilityIcon />
           </IconButton>
-          <IconButton
-            onClick={() => handleDeleteLesson(params.row.id)}
-            sx={{ color: "#E0312E", "&:hover": { color: "#E24943" } }}
-            disabled={deleteStatus === "loading"}
-          >
-            <DeleteIcon />
-          </IconButton>
+        </>
+        )}
+          
+          {isEditing && (
+            <>
+              <IconButton
+                onClick={() => handleEditLesson(params.row)}
+                sx={{ color: "#14375F", "&:hover": { color: "#6D8199" } }}
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                onClick={() => handleDeleteLesson(params.row.id)}
+                sx={{ color: "#E0312E", "&:hover": { color: "#E24943" } }}
+                disabled={deleteStatus === "loading"}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
         </>
       ),
     },
@@ -197,7 +249,7 @@ function LessonTable({ courseId, lessons, isEditing }) {
       ) : (
         <Box sx={{ height: 400, width: "100%", maxWidth: 1200, overflowX: "hidden", transition: "max-width 0.3s ease" }}>
           <DataGrid
-            rows={lessons}
+            rows={sortedLessons} //lessons
             columns={columns}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
@@ -232,6 +284,20 @@ function LessonTable({ courseId, lessons, isEditing }) {
         onClose={() => setOpenLessonDrawer(false)}
         lesson={selectedLesson}
         courseId={courseId}
+      />
+
+      <LessonDetailModal
+        open={openDetailModal}
+        onClose={() => setOpenDetailModal(false)}
+        lesson={detailLesson}
+      />
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Xóa bài học thành công"
+        sx={{ "& .MuiSnackbarContent-root": { backgroundColor: "#FFFFFF", color: "#14375F" } }}
       />
     </>
   );

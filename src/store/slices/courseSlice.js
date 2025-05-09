@@ -146,6 +146,10 @@ const courseSlice = createSlice({
       state.createStatus = "idle";
       state.createError = null;
     },
+    clearLessonErrors: (state) => {
+      state.createError = null;
+      state.updateError = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -286,5 +290,6 @@ const courseSlice = createSlice({
   },
 });
 
+export const { clearLessonErrors } = courseSlice.actions;
 export const { clearCreateStatus } = courseSlice.actions;
 export default courseSlice.reducer;

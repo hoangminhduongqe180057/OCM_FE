@@ -28,8 +28,6 @@ function CourseDetail({ openSidebar }) {
     dispatch(fetchLessons(id));
   }, [dispatch, id]);
 
-  console.log(status)
-
   const handleEditCourse = (data) => {
     dispatch(updateCourse({ id, data })).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {

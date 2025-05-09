@@ -13,12 +13,15 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
+import { clearLessonErrors } from "/src/store/slices/courseSlice.js";
 
 const schema = yup.object({
   title: yup.string().required("Tiêu đề là bắt buộc"),
   videoUrl: yup.string().url("Video URL không hợp lệ").required("Video URL là bắt buộc"),
   documentUrl: yup.string().url("Document URL không hợp lệ").nullable(),
-  order: yup.number().required("Thứ tự là bắt buộc").positive("Thứ tự phải lớn hơn 0"),
+  order: yup.number().transform((value, originalValue) =>
+    originalValue === "" ? undefined : value
+  ).required("Thứ tự là bắt buộc").positive("Thứ tự phải lớn hơn 0"),
 }).required();
 
 function LessonFormDrawer({ open, onClose, lesson, courseId }) {
@@ -176,7 +179,11 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
           />
           <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
             <Button
-              onClick={onClose}
+              onClick={() => {
+                dispatch(clearLessonErrors()); // reset lỗi ở đây
+                reset();
+                onClose();
+              }}
               sx={{
                 color: "#6D8199",
                 "&:hover": { color: "#14375F" },
