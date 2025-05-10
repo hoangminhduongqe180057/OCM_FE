@@ -74,14 +74,32 @@ export const deleteCourse = createAsyncThunk(
   }
 );
 
+// export const createLesson = createAsyncThunk(
+//   "lesson/create",
+//   async (lessonData, { rejectWithValue }) => {
+//     try {
+//       const response = await api.post("/lesson", lessonData);
+//       return response.data.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response?.data?.errors || "Failed to create lesson");
+//     }
+//   }
+// );
+
 export const createLesson = createAsyncThunk(
   "lesson/create",
-  async (lessonData, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/lesson", lessonData);
+      const response = await api.post("/lesson", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.errors || "Failed to create lesson");
+      return rejectWithValue(
+        error.response?.data?.errors || "Failed to create lesson"
+      );
     }
   }
 );
@@ -90,7 +108,6 @@ export const updateLesson = createAsyncThunk(
   'lesson/update',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      console.log(`id là ${id}, data là ${data}`)
       const response = await api.put(`/lesson/${id}`, data);
       
       return response.data.data;

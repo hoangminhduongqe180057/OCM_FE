@@ -114,47 +114,64 @@ function LessonTable({ courseId, lessons, isEditing }) {
       ),
     },
     {
-      field: "videoUrl",
-      headerName: "Video URL",
-      flex: 2.5,
-      renderCell: (params) => (
-        <Typography
-          sx={{
-            fontSize: 16,
-            color: "#14375F",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            width: "100%",
-            paddingRight: 1
-          }}
-          title={params.value}
-        >
-          {params.value}
-        </Typography>
-      ),
-    },
-    {
-      field: "documentUrl",
-      headerName: "Document URL",
-      flex: 2.5,
-      renderCell: (params) => (
-        <Typography
-          sx={{
-            fontSize: 16,
-            color: "#14375F",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            width: "100%",
-            paddingRight: 1
-          }}
-          title={params.value}
-        >
-          {params.value}
-        </Typography>
-      ),
-    },
+  field: "resources",
+  headerName: "Tài nguyên",
+  flex: 1.5,
+  align: "center",
+  headerAlign: "center",
+  renderCell: (params) => {
+    const hasVideo = !!params.row.videoUrl;
+    const hasDoc = !!params.row.documentUrl;
+    let content = "";
+
+    if (hasVideo && hasDoc) content = "Video, Tài liệu";
+    else if (hasVideo) content = "Video";
+    else if (hasDoc) content = "Tài liệu";
+    else content = "—";
+
+    return <Typography variant="body2">{content}</Typography>;
+  },
+},
+    // {
+    // field: "videoUrl",
+    // headerName: "Video",
+    // flex: 1,
+    // renderCell: (params) =>
+    //   params.value ? (
+    //     <IconButton
+    //       href={params.value}
+    //       target="_blank"
+    //       rel="noopener noreferrer"
+    //       sx={{ color: "#14375F" }}
+    //       title="Xem video"
+    //     >
+    //       <LinkIcon />
+    //     </IconButton>
+    //   ) : (
+    //     <Typography sx={{ fontSize: 14, color: "#ccc" }}>—</Typography>
+    //   ),
+    // },
+    // {
+    //   field: "documentUrl",
+    //   headerName: "Document URL",
+    //   flex: 2.5,
+    //   renderCell: (params) => (
+    //     <Typography
+    //       sx={{
+    //         fontSize: 16,
+    //         color: "#14375F",
+    //         overflow: "hidden",
+    //         textOverflow: "ellipsis",
+    //         whiteSpace: "nowrap",
+    //         width: "100%",
+    //         paddingRight: 1
+    //       }}
+    //       title={params.value}
+    //     >
+    //       {params.value}
+    //     </Typography>
+    //   ),
+    // },
     {
       field: "createdAt",
       headerName: "Ngày tạo",
