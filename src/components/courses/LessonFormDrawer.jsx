@@ -179,50 +179,6 @@ function LessonFormDrawer({ open, onClose, lesson, courseId }) {
               />
             )}
           />
-          {/* <Controller
-            name="videoUrl"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Video URL"
-                fullWidth
-                margin="normal"
-                error={!!errors.videoUrl}
-                helperText={errors.videoUrl?.message}
-                sx={{
-                  "& .MuiInputBase-input": { color: "#14375F" },
-                  "& .MuiInputLabel-root": { color: "#14375F" },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "#6D8199" },
-                    "&:hover fieldset": { borderColor: "#14375F" },
-                  },
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="documentUrl"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Document URL"
-                fullWidth
-                margin="normal"
-                error={!!errors.documentUrl}
-                helperText={errors.documentUrl?.message}
-                sx={{
-                  "& .MuiInputBase-input": { color: "#14375F" },
-                  "& .MuiInputLabel-root": { color: "#14375F" },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "#6D8199" },
-                    "&:hover fieldset": { borderColor: "#14375F" },
-                  },
-                }}
-              />
-            )}
-          /> */}
           <Box sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#14375F", mb: 1 }}>
               Video bài giảng {lesson && "(để trống nếu không thay đổi)"}

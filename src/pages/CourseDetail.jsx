@@ -61,6 +61,10 @@ function CourseDetail({ openSidebar }) {
     }
   };
 
+   const handleCancelEdit = () => {
+    setIsEditing(false); // Hủy chế độ chỉnh sửa
+  };
+
   if (status === "loading" && !course) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
@@ -94,19 +98,34 @@ function CourseDetail({ openSidebar }) {
             {isEditing ? "Chỉnh sửa khóa học" : "Chi tiết khóa học"}
           </Typography>
           {["Admin", "Instructor"].includes(role) && (
-            <Button
-              variant="contained"
-              onClick={isEditing ? () => setOpenCourseDrawer(true) : handleToggleEdit}
-              startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
-              sx={{
-                bgcolor: isEditing ? "#E24943" : "#14375F",
-                "&:hover": { bgcolor: isEditing ? "#E0312E" : "#6D8199" },
-                color: "#FFFFFF",
-                "&:focus": { outline: "none" },
-              }}
-            >
-              {isEditing ? "Lưu khóa học" : "Chỉnh sửa"}
-            </Button>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {isEditing && (
+                <Button
+                  variant="outlined"
+                  onClick={handleCancelEdit}
+                  sx={{
+                    color: "#E0312E",
+                    borderColor: "#E0312E",
+                    "&:hover": { borderColor: "#E24943", color: "#E24943" },
+                  }}
+                >
+                  Hủy
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                onClick={handleToggleEdit}
+                startIcon={<EditIcon />}//{isEditing ? <SaveIcon /> : <EditIcon />}
+                sx={{
+                  bgcolor: isEditing ? "#E24943" : "#14375F",
+                  "&:hover": { bgcolor: isEditing ? "#E0312E" : "#6D8199" },
+                  color: "#FFFFFF",
+                  "&:focus": { outline: "none" },
+                }}
+              >
+                {isEditing ? "Chỉnh sửa" : "Cập nhật"}
+              </Button>
+            </Box>
           )}
         </Box>
 
